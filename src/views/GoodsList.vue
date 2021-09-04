@@ -80,9 +80,13 @@
   </el-card>
 
   <!-- 使用组件
-       父传子：绑定属性：centerDialogVisible
+       打开：父传子：绑定属性：centerDialogVisible
+       关闭：子传父：自定义事件
    -->
-  <AddProduct :centerDialogVisible="centerDialogVisible" />
+  <AddProduct
+    :centerDialogVisible="centerDialogVisible"
+    @onCloseDialog="closeDialogVisible"
+  />
 </template>
 
 <script>
@@ -132,11 +136,16 @@ export default {
     const addGoodsInfo = () => {
       state.centerDialogVisible = true // 显示
     }
+    // 关闭函数
+    const closeDialogVisible = (visible) => {
+      state.centerDialogVisible = visible // 显示与隐藏切换 boolean
+    }
     return {
       // 正常解构数据,不是响应式对象，需要使用toRefs函数
       ...toRefs(state),
       url,
       addGoodsInfo,
+      closeDialogVisible,
     }
   },
 }
