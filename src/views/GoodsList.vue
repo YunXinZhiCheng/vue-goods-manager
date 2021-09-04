@@ -1,59 +1,83 @@
 <template>
-  <!-- 表格组件 -->
-  <el-table :data="tableData" style="width: 100%">
-    <!-- 编号列 -->
-    <el-table-column label="编号" width="180">
-      <template #default="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.id }}</span>
-      </template>
-    </el-table-column>
-    <!-- 名称列 -->
-    <el-table-column label="商品名称" width="180">
-      <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top">
-          <template #default>
-            <p>商品名称: {{ scope.row.title }}</p>
-            <p>单价: {{ scope.row.price }}</p>
-          </template>
-          <template #reference>
-            <div class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.title }}</el-tag>
-            </div>
-          </template>
-        </el-popover>
-      </template>
-    </el-table-column>
-    <!-- 图片列 -->
-    <el-table-column label="商品图片" width="180">
-      <template #default="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">
-          <!-- 图片地址:使用字符串拼接 -->
-          <img
-            :src="url + scope.row.thumbnail"
-            alt=""
-            style="width: 180px; height: 180px"
-          />
-        </span>
-      </template>
-    </el-table-column>
-    <!-- 操作列 -->
-    <el-table-column label="操作">
-      <template #default="scope">
-        <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
-          编辑
-        </el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
-        >
-          删除
-        </el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+  <!-- 卡片组件 -->
+  <el-card shadow="never">
+    <!-- 商品标题 -->
+    <template #header>
+      <div class="card-header">
+        <!-- LOGO -->
+        <img
+          src="../assets/logo.png"
+          alt=""
+          style="width: 50px; height: 50px"
+        />
+        <span>商品列表</span>
+      </div>
+    </template>
+    <!-- 商品行:珊格布局，包含3列 -->
+    <el-row :gutter="10">
+      <el-col :span="6">
+        <el-input placeholder="请输入搜索商品名称"></el-input>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary">搜索</el-button>
+        <el-button type="primary">添加</el-button>
+      </el-col>
+    </el-row>
+
+    <!-- 表格组件 -->
+    <el-table :data="tableData" style="width: 100%">
+      <!-- 编号列 -->
+      <el-table-column label="编号" width="180">
+        <template #default="scope">
+          <span style="margin-left: 10px">{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <!-- 名称列 -->
+      <el-table-column label="商品名称" width="180">
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover" placement="top">
+            <template #default>
+              <p>商品名称: {{ scope.row.title }}</p>
+              <p>单价: {{ scope.row.price }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.title }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <!-- 图片列 -->
+      <el-table-column label="商品图片" width="180">
+        <template #default="scope">
+          <span style="margin-left: 10px">
+            <!-- 图片地址:使用字符串拼接 -->
+            <img
+              :src="url + scope.row.thumbnail"
+              alt=""
+              style="width: 180px; height: 180px"
+            />
+          </span>
+        </template>
+      </el-table-column>
+      <!-- 操作列 -->
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
+            编辑
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-card>
 </template>
 
 <script>
