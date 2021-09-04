@@ -78,10 +78,18 @@
       </el-table-column>
     </el-table>
   </el-card>
+
+  <!-- 使用组件
+       父传子：绑定属性：centerDialogVisible
+   -->
+  <AddProduct :centerDialogVisible="centerDialogVisible" />
 </template>
 
 <script>
 import { reactive, onMounted, toRefs } from 'vue'
+// 导入添加商品组件
+import AddProduct from './AddProduct.vue'
+
 // axios
 import axios from 'axios'
 
@@ -100,10 +108,16 @@ function loadData(state) {
     })
 }
 export default {
+  components: {
+    AddProduct,
+  },
   setup() {
-    // 表格数据: 响应式对象
+    // 商品数据: 响应式对象
     const state = reactive({
+      // 表格数据
       tableData: [],
+      // 对话框
+      centerDialogVisible: false,
     })
     // 拿到开发环境下,服务端定义的地址
     const url = import.meta.env.VITE_APP_URL
