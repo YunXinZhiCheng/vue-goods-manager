@@ -1,21 +1,22 @@
 <template>
+  <!-- 表格组件 -->
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column label="日期" width="180">
+    <el-table-column label="编号" width="180">
       <template #default="scope">
         <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        <span style="margin-left: 10px">{{ scope.row.id }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="姓名" width="180">
+    <el-table-column label="商品名称" width="180">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
-            <p>姓名: {{ scope.row.name }}</p>
-            <p>住址: {{ scope.row.address }}</p>
+            <p>商品名称: {{ scope.row.title }}</p>
+            <p>单价: {{ scope.row.price }}</p>
           </template>
           <template #reference>
             <div class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.name }}</el-tag>
+              <el-tag size="medium">{{ scope.row.title }}</el-tag>
             </div>
           </template>
         </el-popover>
@@ -39,41 +40,38 @@
 </template>
 
 <script>
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, toRefs } from 'vue'
+// axios
+import axios from 'axios'
+
 // 封装函数：用于存放数据
-function loadData(data) {
-  // 往数组添加数据
-  data.push(
-    {
-      date: '2016-05-02',
-      name: '王小虎',
-      address: '上海市普陀区金沙江路 1518 弄',
-    },
-    {
-      date: '2016-05-04',
-      name: '王小虎',
-      address: '上海市普陀区金沙江路 1517 弄',
-    },
-    {
-      date: '2016-05-01',
-      name: '王小虎',
-      address: '上海市普陀区金沙江路 1519 弄',
-    }
-  )
-  // 返回数据
-  return data
+function loadData(state) {
+  // axios请求服务端数据
+  axios
+    .get('http://localhost:3005/products')
+    .then((res) => {
+      console.log(res)
+      // 返回表格数据
+      state.tableData = res.data
+    })
+    .catch((err) => {
+      console.error(err)
+    })
 }
 export default {
   setup() {
-    // 表格数据
-    const tableData = reactive([])
+    // 表格数据: 响应式对象
+    const state = reactive({
+      tableData: [],
+    })
     // 钩子函数
     onMounted(() => {
       // 调用函数：加载数据
-      loadData(tableData)
+      loadData(state)
     })
     return {
-      tableData,
+      // 正常解构数据,不是响应式对象，需要使用toRefs函数
+      ...toRefs(state),
     }
   },
 }
