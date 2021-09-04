@@ -1,12 +1,14 @@
 <template>
   <!-- 表格组件 -->
   <el-table :data="tableData" style="width: 100%">
+    <!-- 编号列 -->
     <el-table-column label="编号" width="180">
       <template #default="scope">
         <i class="el-icon-time"></i>
         <span style="margin-left: 10px">{{ scope.row.id }}</span>
       </template>
     </el-table-column>
+    <!-- 名称列 -->
     <el-table-column label="商品名称" width="180">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">
@@ -22,6 +24,21 @@
         </el-popover>
       </template>
     </el-table-column>
+    <!-- 图片列 -->
+    <el-table-column label="商品图片" width="180">
+      <template #default="scope">
+        <i class="el-icon-time"></i>
+        <span style="margin-left: 10px">
+          <!-- 图片地址:使用字符串拼接 -->
+          <img
+            :src="url + scope.row.thumbnail"
+            alt=""
+            style="width: 180px; height: 180px"
+          />
+        </span>
+      </template>
+    </el-table-column>
+    <!-- 操作列 -->
     <el-table-column label="操作">
       <template #default="scope">
         <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
@@ -48,7 +65,7 @@ import axios from 'axios'
 function loadData(state) {
   // axios请求服务端数据
   axios
-    .get('http://localhost:3005/products')
+    .get('/products')
     .then((res) => {
       console.log(res)
       // 返回表格数据
@@ -64,6 +81,9 @@ export default {
     const state = reactive({
       tableData: [],
     })
+    // 拿到开发环境下,服务端定义的地址
+    const url = import.meta.env.VITE_APP_URL
+
     // 钩子函数
     onMounted(() => {
       // 调用函数：加载数据
@@ -72,6 +92,7 @@ export default {
     return {
       // 正常解构数据,不是响应式对象，需要使用toRefs函数
       ...toRefs(state),
+      url,
     }
   },
 }
