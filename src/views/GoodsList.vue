@@ -20,7 +20,7 @@
       </el-col>
       <el-col :span="4">
         <el-button type="primary">搜索</el-button>
-        <el-button type="primary">添加</el-button>
+        <el-button type="primary" @click="addGoodsInfo()">添加</el-button>
       </el-col>
     </el-row>
 
@@ -117,7 +117,7 @@ export default {
       // 表格数据
       tableData: [],
       // 对话框
-      centerDialogVisible: false,
+      centerDialogVisible: false, // 默认隐藏
     })
     // 拿到开发环境下,服务端定义的地址
     const url = import.meta.env.VITE_APP_URL
@@ -127,10 +127,16 @@ export default {
       // 调用函数：加载数据
       loadData(state)
     })
+
+    // 添加函数
+    const addGoodsInfo = () => {
+      state.centerDialogVisible = true // 显示
+    }
     return {
       // 正常解构数据,不是响应式对象，需要使用toRefs函数
       ...toRefs(state),
       url,
+      addGoodsInfo,
     }
   },
 }
