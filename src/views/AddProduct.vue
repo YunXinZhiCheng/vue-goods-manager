@@ -26,7 +26,19 @@
 
       <!-- 表单项 -->
       <el-form-item label="商品图片" prop="coverImg">
-        <img src="" alt="" />
+        <!-- 图片上传
+            action属性：指定上传的服务端地址,修改时需要绑定
+         -->
+        <el-upload
+          class="avatar-uploader"
+          :action="uploadURL"
+          :show-file-list="true"
+          :on-success="handleAvatarSuccess"
+        >
+          <!-- 图片上传以后 -->
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
       </el-form-item>
 
       <!-- 表单项 -->
@@ -34,10 +46,10 @@
         <!-- 富文本编辑器组件 -->
         <QuillEditor theme="snow" v-model="goodsForm.goodsDetail" />
       </el-form-item>
-
+      
       <!-- 表单项 -->
       <el-form-item>
-        <el-button type="primary">添加商品</el-button>
+        <el-button type="danger">添加商品</el-button>
       </el-form-item>
     </el-form>
 
@@ -88,6 +100,12 @@ export default {
     const state = reactive({
       // 商品窗口
       centerDialogVisible: props.centerDialogVisible,
+
+      // 图片上传服务端地址:字符串拼接
+      uploadURL: import.meta.env.VITE_APP_URL + "/goods/fileUpload",
+      // 图片上传以后路径
+      imageUrl: '',
+
       // 商品表单
       goodsForm: {
         title: '',
@@ -102,6 +120,12 @@ export default {
       // 子传父：触发事件
       emit('onCloseDialog', visible)
     }
+    // 图片上传成功后处理函数: 服务端返回
+    const handleAvatarSuccess = (response) => {
+      // 图片完整路径
+      state.imageUrl = import.meta.env.VITE_APP_URL + response.msg
+      console.log(state.imageUrl);
+    }
 
     // 校验规则
     const rules = {
@@ -110,9 +134,9 @@ export default {
       // 价格
       price: [{ required: true, message: '请输入商品价格', trigger: 'blur' }],
       // 图片
-      coverImg: [
-        { required: true, message: '请上传商品主图', trigger: 'blur' },
-      ],
+      // coverImg: [
+      //   { required: true, message: '请上传商品主图', trigger: 'blur' },
+      // ],
       // 详情
       goodsDetail: [
         { required: true, message: '请输入商品详情', trigger: 'blur' },
@@ -123,10 +147,36 @@ export default {
       // 结构方式
       ...toRefs(state),
       closeDialog,
+      handleAvatarSuccess,
       rules,
     }
   },
 }
 </script>
 
-<style></style>
+<style>
+/* 图片上传样式：用户头像 */
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
