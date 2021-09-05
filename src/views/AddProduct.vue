@@ -11,7 +11,7 @@
     <el-form
       :model="goodsForm"
       :rules="rules"
-      ref="ruleForm"
+      ref="validateForm"
       label-width="100px"
     >
       <!-- 表单项 -->
@@ -44,12 +44,16 @@
       <!-- 表单项 -->
       <el-form-item label="商品详情" prop="goodsDeatil">
         <!-- 富文本编辑器组件 -->
-        <QuillEditor theme="snow" v-model="goodsForm.goodsDetail" />
+        <QuillEditor
+          theme="snow"
+          v-model="goodsForm.goodsDeatil"
+          style="height: 100px"
+        />
       </el-form-item>
-      
+
       <!-- 表单项 -->
       <el-form-item>
-        <el-button type="danger">添加商品</el-button>
+        <el-button type="danger" @click="submitAdd">添加商品</el-button>
       </el-form-item>
     </el-form>
 
@@ -75,10 +79,22 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, ref } from 'vue'
 // 导入富文本编辑器
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+
+// 封装函数：添加商品
+function useAdd(validateForm) {
+  const submitAdd = () => {
+    validateForm.value.validate((valid) => {
+      console.log(valid)
+    })
+  }
+  return {
+    submitAdd,
+  }
+}
 
 export default {
   // 注册富文本
@@ -96,13 +112,15 @@ export default {
 
   // 使用属性
   setup(props, { emit }) {
+    // 校验表单
+    const validateForm = ref()
     // 响应式对象
     const state = reactive({
       // 商品窗口
       centerDialogVisible: props.centerDialogVisible,
 
       // 图片上传服务端地址:字符串拼接
-      uploadURL: import.meta.env.VITE_APP_URL + "/goods/fileUpload",
+      uploadURL: import.meta.env.VITE_APP_URL + '/goods/fileUpload',
       // 图片上传以后路径
       imageUrl: '',
 
@@ -127,7 +145,8 @@ export default {
     const handleAvatarSuccess = (response) => {
       // 图片完整路径
       state.imageUrl = import.meta.env.VITE_APP_URL + response.msg
-      console.log(state.imageUrl);
+      state.goodsForm.coverImg = response.msg
+      // console.log(response.msg)
     }
 
     // 校验规则
@@ -137,11 +156,11 @@ export default {
       // 价格
       price: [{ required: true, message: '请输入商品价格', trigger: 'blur' }],
       // 图片
-      // coverImg: [
-      //   { required: true, message: '请上传商品主图', trigger: 'blur' },
-      // ],
+      coverImg: [
+        { required: true, message: '请上传商品主图', trigger: 'blur' },
+      ],
       // 详情
-      goodsDetail: [
+      goodsDeatil: [
         { required: true, message: '请输入商品详情', trigger: 'blur' },
       ],
     }
@@ -152,6 +171,8 @@ export default {
       closeDialog,
       handleAvatarSuccess,
       rules,
+      ...useAdd(validateForm),
+      validateForm,
     }
   },
 }
