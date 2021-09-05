@@ -32,7 +32,7 @@
         <el-upload
           class="avatar-uploader"
           :action="uploadURL"
-          :show-file-list="true"
+          :show-file-list="false"
           :on-success="handleAvatarSuccess"
         >
           <!-- 图片上传以后 -->
@@ -117,6 +117,9 @@ export default {
 
     // 关闭函数
     const closeDialog = (visible) => {
+      // 清空图片地址
+      state.imageUrl = ''
+
       // 子传父：触发事件
       emit('onCloseDialog', visible)
     }
